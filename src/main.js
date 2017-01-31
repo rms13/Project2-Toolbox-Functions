@@ -40,25 +40,8 @@ function onLoad(framework) {
         // LOOK: This function runs after the obj has finished loading
         var featherGeo = obj.children[0].geometry;
 
-        var featherMesh = new THREE.Mesh(featherGeo, lambertWhite);
-        featherMesh.name = "feather";
-//        scene.add(featherMesh);
-		
-/* 		var randomPoints = [];
-		var rpos = new THREE.Vector3(0,0,0);
-		randomPoints.push(rpos);
-		rpos=(,0,1);
-		randomPoints.push(rpos);
-		rpos=(1,0,1);
-		randomPoints.push(rpos);
-		rpos=(1,0,1);
-		randomPoints.push(rpos);
-		//randomPoints.push(i);
-		//for ( var i = 0; i < 10; i ++ ) {
-		//	randomPoints.push( new THREE.Vector3( ( i - 4.5 ) * 50, THREE.Math.randFloat( - 50, 50 ), THREE.Math.randFloat( - 50, 50 ) ) );
-		//	randomPoints.push(i);
-		//}
-		var randomSpline =  new THREE.CatmullRomCurve3(randomPoints); */
+    //var date = new Date();
+  //  feather1.position.y+=feather1.position.z/20 * Math.sin(date.getTime() / 1000);
 		var curve = new THREE.CatmullRomCurve3( [
 			new THREE.Vector3( 0, 0, 0 ),
 			new THREE.Vector3( -0.25, 0, 1),
@@ -70,24 +53,17 @@ function onLoad(framework) {
 		var max=30;
 		for(var i=1; i<max+1; i++) // LONG FEATHERS
 		{
-			//var FMCopy1 = new THREE.Mesh(featherGeo, lambertWhite);
-			//var FMCopy2 = new THREE.Mesh(featherGeo, lambertWhite);
+
 			var FMCopy = new THREE.Mesh(featherGeo, lambertWhite);
-			//var a = new THREE.Euler( 0, 1, 10*i*3.14/180, 'XYZ' );
-			//FMCopy.position.set(0,0,i/10);
+
 			var ind = curve.getPoint( i/max );
 			var pos = new THREE.Vector3(ind.x,ind.y,ind.z);
 			FMCopy.position.x=pos.x;
 			FMCopy.position.y=pos.y;
 			FMCopy.position.z=pos.z;
-			
+
 			//console.log(FMCopy.position);
-			
-			//var quaternion = new THREE.Quaternion();
-			//quaternion.setFromAxisAngle( new THREE.Vector3( 0, 1, 0 ), Math.PI / 2 );
-			//FMCopy.quaternion.set( quaternion );
-			//FMCopy.rotation.x = 10 * i * Math.PI/180;
-			//FMCopy.rotation.y = curve.getTangent(i/10);
+
 			if(i<=20) // MAIN WING - SOFT CURVE PART
 			{
 				FMCopy.rotation.y = i * Math.PI/180;
@@ -98,12 +74,12 @@ function onLoad(framework) {
 				FMCopy.rotation.y = (10 * (i-20) + 20) * Math.PI/180;
 				FMCopy.scale.set(-0.9-0.1*(Math.abs(i-20)/20),-1,1);
 			}
-			
+
 			FMCopy.name = "feather_long"+i;
 			//console.log(FMCopy.name);
 			scene.add(FMCopy);
 		}
-		
+
 		for(var i=1; i<max+1-1; i++) // SHORT FEATHERS
 		{
 			var FMCopy = new THREE.Mesh(featherGeo, lambertWhite);
@@ -126,26 +102,26 @@ function onLoad(framework) {
 			FMCopy.name = "feather_short"+i;
 			scene.add(FMCopy);
 		}
-		
+
 		for(var i=1; i<21; i++) // VERY SHORT FEATHERS
 		{
 			var FMCopy = new THREE.Mesh(featherGeo, lambertWhite);
 			var ind = curve.getPoint(i/max);
 			var pos = new THREE.Vector3(ind.x,ind.y,ind.z);
-			
+
 			FMCopy.position.x=pos.x;
 			FMCopy.position.y=pos.y;
 			FMCopy.position.z=pos.z;
 			FMCopy.rotation.z= -6*(41-i)/30 * Math.PI/180;
-			
+
 			FMCopy.scale.set(-0.4,-1,1);
 			FMCopy.rotation.y = ((20-i)/20+2)/(4) * Math.PI/180;
-			
+
 			FMCopy.name = "feather_very_short"+i;
 			scene.add(FMCopy);
 		}
     });
-	
+
     // set camera position
     camera.position.set(0, 1, 5);
     camera.lookAt(new THREE.Vector3(0,0,0));
@@ -160,29 +136,51 @@ function onLoad(framework) {
     });
 }
 
+// function createWing(framework) {
+//
+// }
+var old = new Date();;
+
 // called on frame updates
 function onUpdate(framework) {
-    for(var i=0; i<31; i++)
+  var date = new Date();
+  var disp=(Math.sin(date.getTime() / 10 * Math.PI/180) - Math.sin(old.getTime() / 10 * Math.PI/180));
+  for(var i=0; i<31; i++)
 	{
-		var feather1 = framework.scene.getObjectByName("feather_long"+i);  
+		var feather1 = framework.scene.getObjectByName("feather_long"+i);
 		var feather2 = framework.scene.getObjectByName("feather_short"+i);
-		var feather3 = framework.scene.getObjectByName("feather_very_short"+i);		
+		var feather3 = framework.scene.getObjectByName("feather_very_short"+i);
 		if (feather1 !== undefined) {
-			var date = new Date();
-			feather1.position.y+=feather1.position.z/20 * Math.sin(date.getTime() / 1000);   
+
+			//feather1.rotateX(feather1.position.z/10 * Math.sin(date.getTime() / 1000 * Math.PI/180));
+      //rotateAboutWorldAxis(feather1,new THREE.Vector4(1,0,0,1), - feather1.position.z/10 * Math.sin(old.getTime() / 1000 * Math.PI/180));
+      feather1.position.y += feather1.position.z/2 * disp;
 			//console.log(feather.name);
 		}
 		if(feather2 !== undefined) {
-			var date = new Date();
-			feather2.position.y+=feather2.position.z/20 * Math.sin(date.getTime() / 1000);   
+			//var date = new Date();
+      feather2.position.y += feather2.position.z/2 * disp;
+			//feather2.rotateX(feather2.position.z/10 * Math.sin(date.getTime() / 1000 * Math.PI/180));
 			//console.log(feather.name);
 		}
 		if(feather3 !== undefined) {
-			var date = new Date();
-			feather3.position.y+=feather3.position.z/20 * Math.sin(date.getTime() / 1000);   
+		//	var date = new Date();
+      feather3.position.y += feather3.position.z/2 * disp;
+			//feather3.rotateX(feather3.position.z/10 * Math.sin(date.getTime() / 1000 * Math.PI/180));
 			//console.log(feather.name);
 		}
 	}
+  old = date;
+}
+
+function rotateAboutWorldAxis(object, axis, angle) {
+  var rotationMatrix = new THREE.Matrix4();
+  rotationMatrix.makeRotationAxis( axis.normalize(), angle );
+  var currentPos = new THREE.Vector4(object.position.x, object.position.y, object.position.z, 1);
+  var newPos = currentPos.applyMatrix4(rotationMatrix);
+  object.position.x = newPos.x;
+  object.position.y = newPos.y;
+  object.position.z = newPos.z;
 }
 
 // when the scene is done initializing, it will call onLoad, then on frame updates, call onUpdate
